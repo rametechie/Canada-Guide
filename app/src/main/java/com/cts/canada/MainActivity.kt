@@ -29,7 +29,7 @@ class MainActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
-
+        setSupportActionBar(findViewById(R.id.my_toolbar))
         viewManager = LinearLayoutManager(this)
         getFactsData()
         var dummyListData: ArrayList<FactsRowItem> =
@@ -54,7 +54,7 @@ class MainActivity : AppCompatActivity() {
     private fun getFactsData() {
         val apiService: ApiService =
             RetrofitClientInstance.getClient(this.applicationContext)!!.create(ApiService::class.java)
-        apiService.getFacts()
+            apiService.getFacts()
             .subscribeOn(Schedulers.io())
             .observeOn(AndroidSchedulers.mainThread())
             .map { response ->
