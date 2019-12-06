@@ -1,31 +1,26 @@
 package com.cts.canada
 
-import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import android.widget.Toast
+import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.cts.canada.adapter.FactsAdapter
-import com.cts.canada.model.Facts
 import com.cts.canada.model.FactsRowItem
-import com.cts.canada.network.ApiService
 import com.cts.canada.network.RetrofitClientInstance
-import androidx.core.app.ComponentActivity.ExtraData
-import androidx.core.content.ContextCompat.getSystemService
-import android.icu.lang.UCharacter.GraphemeClusterBreak.T
 import io.reactivex.android.schedulers.AndroidSchedulers
-import io.reactivex.functions.Consumer
+import io.reactivex.disposables.Disposable
 import io.reactivex.schedulers.Schedulers
-import rx.Scheduler
-import rx.Subscriber
-import java.util.*
-import kotlin.collections.ArrayList
-import io.reactivex.Single
 
 class MainActivity : AppCompatActivity() {
     private lateinit var recyclerView: RecyclerView
     private lateinit var viewAdapter: RecyclerView.Adapter<*>
     private lateinit var viewManager: RecyclerView.LayoutManager
+    private var disposable: Disposable? = null
 
+    private val retrofitClientInstance by lazy {
+        RetrofitClientInstance.getClient(this.applicationContext)
+    }
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
@@ -50,24 +45,22 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
-
-    private fun getFactsData() {
-        val apiService: ApiService =
-            RetrofitClientInstance.getClient(this.applicationContext)!!.create(ApiService::class.java)
-        apiService.getFacts()
-            .subscribeOn(Schedulers.io())
-            .observeOn(AndroidSchedulers.mainThread())
-            .map { response ->
-                mapDataToDomainPayIds(response)
-            }
-
+    override fun onPause() {
+        super.onPause()
+        disposable?.dispose()
     }
 
+
+    private fun getFactsData() {
+        disposable = retrofitClientInstance.getFacts()
+            .subscribeOn(Schedulers.io())
+            .observeOn(AndroidSchedulers.mainThread())
+            .subscribe(
+                { result -> "${result.title} result found" },
+                { error -> Toast.makeText(this, error.message, Toast.LENGTH_SHORT).show() }
+            )
+    }
    }
 
 
-    fun mapDataToDomainPayIds(responce:Facts)
-    {
-        println("factsstring" + "$responce" + responce.rowsList)
-    }
 

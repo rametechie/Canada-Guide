@@ -13,18 +13,19 @@ class RetrofitClientInstance {
     companion object
     {
         private val BASE_URL = "https://dl.dropboxusercontent.com"
+        fun getClient(context: Context):ApiService {
 
-        private var retrofit: Retrofit? = null
-        fun getClient(context: Context): Retrofit? {
-            if (retrofit == null) {
-                retrofit = Retrofit.Builder()
+                val retrofit  = Retrofit.Builder()
                     .addConverterFactory(GsonConverterFactory.create())
                     .addCallAdapterFactory(RxJava2CallAdapterFactory.create())
                     .baseUrl(BASE_URL)
                     .build()
-            }
-            return retrofit
+            return retrofit.create(ApiService::class.java)
+
         }
+
+
+
     }
 
 
