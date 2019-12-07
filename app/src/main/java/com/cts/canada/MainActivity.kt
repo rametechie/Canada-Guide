@@ -6,6 +6,7 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.cts.canada.adapter.FactsAdapter
+import com.cts.canada.model.Facts
 import com.cts.canada.model.FactsRowItem
 import com.cts.canada.network.RetrofitClientInstance
 import io.reactivex.android.schedulers.AndroidSchedulers
@@ -17,6 +18,8 @@ class MainActivity : AppCompatActivity() {
     private lateinit var viewAdapter: RecyclerView.Adapter<*>
     private lateinit var viewManager: RecyclerView.LayoutManager
     private var disposable: Disposable? = null
+    private var resultData: Facts? = null
+
 
     private val retrofitClientInstance by lazy {
         RetrofitClientInstance.getClient(this.applicationContext)
@@ -28,10 +31,15 @@ class MainActivity : AppCompatActivity() {
         viewManager = LinearLayoutManager(this)
         getFactsData()
         var dummyListData: ArrayList<FactsRowItem> =
-            arrayListOf(FactsRowItem("ramesh", "just for checking the recyclerview", "imageview"))
+            arrayListOf(FactsRowItem("ramesh", "just for checking the recyclerview to find if the views are coming properly", "imageview"))
 
-        viewAdapter = FactsAdapter(dummyListData, this)
-        recyclerView = findViewById<RecyclerView>(R.id.recyclerView).apply {
+        if (resultData != null) {
+            viewAdapter = FactsAdapter(resultData!!.rowsList, this)
+        } else {
+            viewAdapter = FactsAdapter(dummyListData, this)
+        }
+
+         recyclerView = findViewById<RecyclerView>(R.id.recyclerView).apply {
             // use this setting to improve performance if you know that changes
             // in content do not change the layout size of the RecyclerView
             setHasFixedSize(true)
@@ -52,13 +60,16 @@ class MainActivity : AppCompatActivity() {
 
 
     private fun getFactsData() {
+
         disposable = retrofitClientInstance.getFacts()
             .subscribeOn(Schedulers.io())
             .observeOn(AndroidSchedulers.mainThread())
             .subscribe(
-                { result -> "${result.title} result found" },
+                { result ->   viewAdapter = FactsAdapter(resultData!!.rowsList, this) },
                 { error -> Toast.makeText(this, error.message, Toast.LENGTH_SHORT).show() }
             )
+
+
     }
    }
 
