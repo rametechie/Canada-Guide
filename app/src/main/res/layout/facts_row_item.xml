@@ -34,16 +34,16 @@
 
     <ImageView
         android:id="@+id/hpref"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+        android:layout_width="150dp"
+        android:layout_height="100dp"
         android:src="@drawable/ic_launcher_background"
         app:layout_constraintTop_toBottomOf="@+id/title"
         app:layout_constraintEnd_toStartOf="@+id/right_arrow"/>
 
     <ImageView
         android:id="@+id/right_arrow"
-        android:layout_width="50dp"
-        android:layout_height="100dp"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
         android:src="@drawable/ic_keyboard_arrow_right_black_36dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintTop_toTopOf="parent"
