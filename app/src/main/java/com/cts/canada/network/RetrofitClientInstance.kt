@@ -1,6 +1,7 @@
 package com.cts.canada.network
 
 import android.content.Context
+import com.amit.saha.util.Constant.BASE_URL
 import com.jakewharton.retrofit2.adapter.rxjava2.RxJava2CallAdapterFactory
 import okhttp3.*
 import retrofit2.Retrofit
@@ -12,12 +13,10 @@ import java.util.concurrent.TimeUnit
  * Created by Ramesh.P on 12/05/19.
  */
 class RetrofitClientInstance {
-    val logging = HttpLoggingInterceptor()
-
 
     companion object
     {
-        private val BASE_URL = "https://dl.dropboxusercontent.com"
+//        private val BASE_URL = "https://dl.dropboxusercontent.com"
         fun getClient(context: Context):ApiService {
                 val retrofit  = Retrofit.Builder()
                     .addConverterFactory(GsonConverterFactory.create())

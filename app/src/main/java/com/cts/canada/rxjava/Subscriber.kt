@@ -7,7 +7,7 @@ package au.com.suncorp.marketplace.application.rx
  * well as the ability to dispose, resubscribe, or clear the subscription entirely.
  * Consumers decide where these events are called; typically in the screen's lifecycle.
  *
- * Created by Dan Nichols on 5/9/18.
+ * Created by Ramesh.P on 5/9/18.
  *
  * @param T
  *      The type of observable that this [Subscriber] can subscribe to.

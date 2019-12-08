@@ -4,7 +4,7 @@ import io.reactivex.Single
 import io.reactivex.disposables.Disposables
 
 /**
- * Created by Dan Nichols on 5/9/18.
+ * Created by Ramesh.P on 5/9/18.
  */
 class SingleSubscriber<T>(private val onSuccess: (T) -> Unit,
                           private val onError: (Throwable) -> Unit) : Subscriber<Single<T>> {

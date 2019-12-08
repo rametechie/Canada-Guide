@@ -18,6 +18,4 @@ class FileParsing {
             return dataFacts;
         }
     }
-
-
 }

@@ -8,10 +8,12 @@ import com.cts.canada.network.RetrofitClientInstance
 import com.cts.canada.util.FileParsing
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.schedulers.Schedulers
+import javax.inject.Inject
 
-class FactsPresenter(val context: Context) {
+class FactsPresenter (val context: Context) {
 
-    private lateinit var display: Display
+    public lateinit var display: Display
+
 
     private val getFactsSubscriber =
         SingleSubscriber(this::onGetPayIdsSuccess, this::onGetPayIdsFailure)
@@ -20,20 +22,16 @@ class FactsPresenter(val context: Context) {
         RetrofitClientInstance.getClient(context)
     }
 
-    fun onResume()  = getFactsData()
+    fun onResume() {
+        getDisplayContext(context)
+        getFactsData()
+    }
 
-    fun onPause() = getFactsSubscriber.clear()
+    fun onPause() = getFactsSubscriber.dispose()
 
     fun onStop() = getFactsSubscriber.clear()
 
     fun getFactsData() {
-        if (context is Display) {
-            display = context
-        } else {
-            throw ClassCastException(
-                context.toString() + " must implement OnDogSelected.")
-        }
-
         getFactsSubscriber.dispatch(
             retrofitClientInstance.getFacts()
                 .subscribeOn(Schedulers.io())
@@ -48,6 +46,16 @@ class FactsPresenter(val context: Context) {
         getFactsSubscriber.subscribe()
     }
 
+    fun getDisplayContext(context:Context): Display {
+        if (context is Display) {
+            display = context
+        } else {
+            throw ClassCastException(
+                context.toString() + " must implement methods."
+            )
+        }
+        return display
+    }
 
     fun onGetPayIdsSuccess(facts: Facts) {
         display.displayFactsList(facts.rows)
@@ -63,7 +71,7 @@ class FactsPresenter(val context: Context) {
 
         fun displayFactsList(factsData: ArrayList<FactsRowItem>)
 
-        fun showError(throwable : Throwable)
+        fun showError(throwable: Throwable)
 
         fun setDummyFactsData(factsData: ArrayList<FactsRowItem>)
     }

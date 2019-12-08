@@ -7,24 +7,36 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.cts.canada.R
 import com.cts.canada.adapter.FactsAdapter
+import com.cts.canada.dependencyinjection.component.ActivityComponent
 import com.cts.canada.model.FactsRowItem
-import com.cts.canada.network.RetrofitClientInstance
 import com.cts.canada.presenter.FactsPresenter
+import javax.inject.Inject
 
 class FactsActivity : AppCompatActivity() , FactsPresenter.Display {
     private lateinit var recyclerView: RecyclerView
     private lateinit var viewManager: RecyclerView.LayoutManager
     private lateinit var factsPresenter: FactsPresenter
+
+//    @Inject
+//    override lateinit var presenter: FactsPresenter
+
+//    override fun inject(activityComponent: ActivityComponent) {
+//        activityComponent.inject(this)
+////        presenter.inject(this)
+//    }
     protected val factsAdapter: FactsAdapter by lazy {
         FactsAdapter(this)
     }
-    private val retrofitClientInstance by lazy {
-        RetrofitClientInstance.getClient(this.applicationContext)
-    }
+
+//    private val retrofitClientInstance by lazy {
+//        RetrofitClientInstance.getClient(this.applicationContext)
+//    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
+
+
 
         viewManager = LinearLayoutManager(this)
         factsPresenter =  FactsPresenter(this)
