@@ -5,20 +5,20 @@ import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
-import au.com.suncorp.marketplace.application.rx.SingleSubscriber
 import com.cts.canada.adapter.FactsAdapter
-import com.cts.canada.model.Facts
+import com.cts.canada.model.FactsRowItem
 import com.cts.canada.network.RetrofitClientInstance
-import com.cts.canada.util.FileParsing
-import io.reactivex.android.schedulers.AndroidSchedulers
-import io.reactivex.schedulers.Schedulers
+import com.cts.canada.presenter.FactsPresenter
 
-class FactsActivity : AppCompatActivity() {
+class FactsActivity : AppCompatActivity() , FactsPresenter.Display {
+
+
     private lateinit var recyclerView: RecyclerView
     private lateinit var viewManager: RecyclerView.LayoutManager
+    private lateinit var factsPresenter: FactsPresenter
     //private var disposable: Disposable? = null
-    private val getFactsSubscriber =
-        SingleSubscriber(this::onGetPayIdsSuccess, this::onGetPayIdsFailure)
+//    private val getFactsSubscriber =
+//        SingleSubscriber(this::onGetPayIdsSuccess, this::onGetPayIdsFailure)
 
 
     protected val factsAdapter: FactsAdapter by lazy {
@@ -33,60 +33,82 @@ class FactsActivity : AppCompatActivity() {
         setContentView(R.layout.activity_main)
 
         viewManager = LinearLayoutManager(this)
-        getFactsData()
+        factsPresenter =  FactsPresenter(this)
+//        factsPresenter.getFactsData()
         recyclerView = findViewById<RecyclerView>(R.id.recyclerView)
         recyclerView.layoutManager = viewManager
         recyclerView.adapter = factsAdapter
     }
 
+    override fun onResume() {
+        super.onResume()
+        factsPresenter.onResume()
+    }
+
     override fun onPause() {
         super.onPause()
 //        disposable?.dispose()
-        getFactsSubscriber.dispose()
+        //getFactsSubscriber.dispose()
+        factsPresenter.onPause()
     }
 
     override fun onStop() {
         super.onStop()
-        getFactsSubscriber.clear()
+        //getFactsSubscriber.clear()
+        factsPresenter.onStop()
     }
 
 
-    private fun getFactsData() {
+//    private fun getFactsData() {
+//
+////        disposable = retrofitClientInstance.getFacts()
+////            .subscribeOn(Schedulers.io())
+////            .observeOn(AndroidSchedulers.mainThread())
+////            .subscribe(
+////                { result ->   factsAdapter.setFactsList(result.rows)},
+////                { error -> Toast.makeText(this, error.message, Toast.LENGTH_SHORT).show() }
+////            )
+//
+//        getFactsSubscriber.dispatch(
+//            retrofitClientInstance.getFacts()
+//                .subscribeOn(Schedulers.io())
+//                .observeOn(AndroidSchedulers.mainThread())
+//                .doOnSubscribe {
+//
+//                }
+//                .doAfterTerminate {
+//
+//                })
+//
+//        getFactsSubscriber.subscribe()
+//    }
 
-//        disposable = retrofitClientInstance.getFacts()
-//            .subscribeOn(Schedulers.io())
-//            .observeOn(AndroidSchedulers.mainThread())
-//            .subscribe(
-//                { result ->   factsAdapter.setFactsList(result.rows)},
-//                { error -> Toast.makeText(this, error.message, Toast.LENGTH_SHORT).show() }
-//            )
-
-        getFactsSubscriber.dispatch(
-            retrofitClientInstance.getFacts()
-                .subscribeOn(Schedulers.io())
-                .observeOn(AndroidSchedulers.mainThread())
-                .doOnSubscribe {
-
-                }
-                .doAfterTerminate {
-
-                })
-
-        getFactsSubscriber.subscribe()
-    }
-
-
-    private fun onGetPayIdsSuccess(facts: Facts) {
-        factsAdapter.setFactsList(facts.rows)
+//
+//    private fun onGetPayIdsSuccess(facts: Facts) {
+//        factsAdapter.setFactsList(facts.rows)
+////        val parsedData = FileParsing.parseJson(this)
+////        factsAdapter.setFactsList(parsedData.rows)
+//    }
+//
+//    private fun onGetPayIdsFailure(throwable: Throwable) {
+//        Toast.makeText(this, throwable.message, Toast.LENGTH_SHORT).show()
 //        val parsedData = FileParsing.parseJson(this)
 //        factsAdapter.setFactsList(parsedData.rows)
+//    }
+
+
+    override fun displayFactsList(factsData: ArrayList<FactsRowItem>) {
+                factsAdapter.setFactsList(factsData)
     }
 
-    private fun onGetPayIdsFailure(throwable: Throwable) {
+    override fun showError(throwable: Throwable) {
         Toast.makeText(this, throwable.message, Toast.LENGTH_SHORT).show()
-        val parsedData = FileParsing.parseJson(this)
-        factsAdapter.setFactsList(parsedData.rows)
     }
+
+    override fun setDummyFactsData(factsListData: ArrayList<FactsRowItem>) {
+        factsAdapter.setFactsList(factsListData)
+    }
+
 }
 
 
