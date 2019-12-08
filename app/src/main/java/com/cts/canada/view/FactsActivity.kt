@@ -1,18 +1,17 @@
-package com.cts.canada
+package com.cts.canada.view
 
 import android.os.Bundle
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import com.cts.canada.R
 import com.cts.canada.adapter.FactsAdapter
 import com.cts.canada.model.FactsRowItem
 import com.cts.canada.network.RetrofitClientInstance
 import com.cts.canada.presenter.FactsPresenter
 
 class FactsActivity : AppCompatActivity() , FactsPresenter.Display {
-
-
     private lateinit var recyclerView: RecyclerView
     private lateinit var viewManager: RecyclerView.LayoutManager
     private lateinit var factsPresenter: FactsPresenter
