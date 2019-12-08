@@ -15,12 +15,11 @@ import io.reactivex.schedulers.Schedulers
 
 class MainActivity : AppCompatActivity() {
     private lateinit var recyclerView: RecyclerView
-    private lateinit var viewAdapter: RecyclerView.Adapter<*>
     private lateinit var viewManager: RecyclerView.LayoutManager
     private var disposable: Disposable? = null
-    private var resultData: Facts? = null
-
-
+    protected val factsAdapter: FactsAdapter by lazy {
+        FactsAdapter(this)
+    }
     private val retrofitClientInstance by lazy {
         RetrofitClientInstance.getClient(this.applicationContext)
     }
@@ -30,27 +29,9 @@ class MainActivity : AppCompatActivity() {
 
         viewManager = LinearLayoutManager(this)
         getFactsData()
-        var dummyListData: ArrayList<FactsRowItem> =
-            arrayListOf(FactsRowItem("ramesh", "just for checking the recyclerview to find if the views are coming properly", "imageview"))
-
-        if (resultData != null) {
-            viewAdapter = FactsAdapter(resultData!!.rowsList, this)
-        } else {
-            viewAdapter = FactsAdapter(dummyListData, this)
-        }
-
-         recyclerView = findViewById<RecyclerView>(R.id.recyclerView).apply {
-            // use this setting to improve performance if you know that changes
-            // in content do not change the layout size of the RecyclerView
-            setHasFixedSize(true)
-
-            // use a linear layout manager
-            layoutManager = viewManager
-
-            // specify an viewAdapter (see also next example)
-            adapter = viewAdapter
-
-        }
+         recyclerView = findViewById<RecyclerView>(R.id.recyclerView)
+             recyclerView.layoutManager = viewManager
+             recyclerView.adapter = factsAdapter
     }
 
     override fun onPause() {
@@ -65,7 +46,7 @@ class MainActivity : AppCompatActivity() {
             .subscribeOn(Schedulers.io())
             .observeOn(AndroidSchedulers.mainThread())
             .subscribe(
-                { result ->   viewAdapter = FactsAdapter(resultData!!.rowsList, this) },
+                { result ->   factsAdapter.setFactsList(result.rows)},
                 { error -> Toast.makeText(this, error.message, Toast.LENGTH_SHORT).show() }
             )
 
