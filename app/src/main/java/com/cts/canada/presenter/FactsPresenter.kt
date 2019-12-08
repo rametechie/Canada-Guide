@@ -33,13 +33,6 @@ class FactsPresenter(val context: Context) {
             throw ClassCastException(
                 context.toString() + " must implement OnDogSelected.")
         }
-//        disposable = retrofitClientInstance.getFacts()
-//            .subscribeOn(Schedulers.io())
-//            .observeOn(AndroidSchedulers.mainThread())
-//            .subscribe(
-//                { result ->   factsAdapter.setFactsList(result.rows)},
-//                { error -> Toast.makeText(this, error.message, Toast.LENGTH_SHORT).show() }
-//            )
 
         getFactsSubscriber.dispatch(
             retrofitClientInstance.getFacts()
@@ -57,16 +50,11 @@ class FactsPresenter(val context: Context) {
 
 
     private fun onGetPayIdsSuccess(facts: Facts) {
-
         display.displayFactsList(facts.rows)
-//        val parsedData = FileParsing.parseJson(this)
-//        factsAdapter.setFactsList(parsedData.rows)
     }
 
     private fun onGetPayIdsFailure(throwable: Throwable) {
-       // Toast.makeText(this, throwable.message, Toast.LENGTH_SHORT).show()
-          val parsedData = FileParsing.parseJson(context)
-//        factsAdapter.setFactsList(parsedData.rows)
+        val parsedData = FileParsing.parseJson(context)
         display.showError(throwable)
         display.setDummyFactsData(parsedData.rows)
     }
