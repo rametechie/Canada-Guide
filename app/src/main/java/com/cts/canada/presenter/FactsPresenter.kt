@@ -49,11 +49,11 @@ class FactsPresenter(val context: Context) {
     }
 
 
-    private fun onGetPayIdsSuccess(facts: Facts) {
+    fun onGetPayIdsSuccess(facts: Facts) {
         display.displayFactsList(facts.rows)
     }
 
-    private fun onGetPayIdsFailure(throwable: Throwable) {
+    fun onGetPayIdsFailure(throwable: Throwable) {
         val parsedData = FileParsing.parseJson(context)
         display.showError(throwable)
         display.setDummyFactsData(parsedData.rows)
