@@ -7,4 +7,8 @@ import dagger.Module
  * Created by lucasrichards on 27/09/2017.
  */
 @Module
-class ActivityModule(private val activity: AppCompatActivity)
+class ActivityModule(private val activity: AppCompatActivity){
+
+
+}
+

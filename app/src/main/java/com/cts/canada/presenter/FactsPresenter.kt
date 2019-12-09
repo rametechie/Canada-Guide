@@ -10,7 +10,7 @@ import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.schedulers.Schedulers
 import javax.inject.Inject
 
-class FactsPresenter (val context: Context) {
+class FactsPresenter @Inject constructor(val context: Context) {
 
     public lateinit var display: Display
 

@@ -2,6 +2,7 @@ package com.cts.canada.dependencyinjection.module
 
 import android.app.Application
 import android.content.Context
+import com.cts.canada.presenter.FactsPresenter
 import dagger.Module
 import dagger.Provides
 import javax.inject.Singleton
@@ -16,6 +17,10 @@ class ApplicationModule(private val application: Application) {
     @Singleton
     fun provideContext(): Context = application
 
-
+    @Provides
+    @Singleton
+    fun factsPresenter(context: Context) : FactsPresenter {
+        return  FactsPresenter(context)
+    }
 
 }

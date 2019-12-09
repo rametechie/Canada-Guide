@@ -17,13 +17,13 @@ class FactsActivity : AppCompatActivity() , FactsPresenter.Display {
     private lateinit var viewManager: RecyclerView.LayoutManager
     private lateinit var factsPresenter: FactsPresenter
 
-//    @Inject
-//    override lateinit var presenter: FactsPresenter
+    @Inject
+    override lateinit var presenter: FactsPresenter
 
-//    override fun inject(activityComponent: ActivityComponent) {
-//        activityComponent.inject(this)
-////        presenter.inject(this)
-//    }
+    override fun inject(activityComponent: ActivityComponent) {
+        activityComponent.inject(this)
+        presenter.inject(this)
+    }
     protected val factsAdapter: FactsAdapter by lazy {
         FactsAdapter(this)
     }
