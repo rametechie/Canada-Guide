@@ -22,6 +22,10 @@ class FactsPresenter @Inject constructor(val context: Context) {
         RetrofitClientInstance.getClient(context)
     }
 
+    fun inject(display: Display) {
+        this.display = display
+    }
+
     fun onResume() {
         getDisplayContext(context)
         getFactsData()

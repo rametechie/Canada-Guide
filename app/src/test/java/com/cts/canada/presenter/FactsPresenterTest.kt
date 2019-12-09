@@ -26,8 +26,7 @@ class FactsPresenterTest {
     @Before
     fun setUp() {
 
-
-        factsPresenter   = FactsPresenter(mockcontext)
+       factsPresenter   = FactsPresenter(mockcontext)
 
     }
 
