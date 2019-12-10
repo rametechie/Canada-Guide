@@ -1,19 +1,21 @@
 package com.cts.canada.presenter
 
+import android.app.Application
 import android.content.Context
 import au.com.suncorp.marketplace.application.rx.SingleSubscriber
+import com.cts.canada.dependencyinjection.module.RxThreadModule
 import com.cts.canada.model.Facts
 import com.cts.canada.model.FactsRowItem
 import com.cts.canada.network.RetrofitClientInstance
-import com.cts.canada.util.FileParsing
-import io.reactivex.android.schedulers.AndroidSchedulers
-import io.reactivex.schedulers.Schedulers
 import javax.inject.Inject
+import io.reactivex.Scheduler
+import javax.inject.Named
 
-class FactsPresenter @Inject constructor(val context: Context) {
+class FactsPresenter @Inject constructor(@Named(RxThreadModule.mainThread) private val mainSchedulers: Scheduler,
+                                         @Named(RxThreadModule.ioThread) private val ioScheduler: Scheduler) {
 
     public lateinit var display: Display
-
+    public lateinit var context: Context
 
     private val getFactsSubscriber =
         SingleSubscriber(this::onGetPayIdsSuccess, this::onGetPayIdsFailure)
@@ -26,9 +28,14 @@ class FactsPresenter @Inject constructor(val context: Context) {
         this.display = display
     }
 
+    fun appContext(context: Context) {
+        this.context = context
+    }
+
     fun onResume() {
-        getDisplayContext(context)
-        getFactsData()
+       // getDisplayContext(context)
+       // getFactsData()
+        display.checkDagger()
     }
 
     fun onPause() = getFactsSubscriber.dispose()
@@ -38,8 +45,8 @@ class FactsPresenter @Inject constructor(val context: Context) {
     fun getFactsData() {
         getFactsSubscriber.dispatch(
             retrofitClientInstance.getFacts()
-                .subscribeOn(Schedulers.io())
-                .observeOn(AndroidSchedulers.mainThread())
+                .subscribeOn(ioScheduler)
+                .observeOn(mainSchedulers)
                 .doOnSubscribe {
 
                 }
@@ -50,25 +57,25 @@ class FactsPresenter @Inject constructor(val context: Context) {
         getFactsSubscriber.subscribe()
     }
 
-    fun getDisplayContext(context:Context): Display {
-        if (context is Display) {
-            display = context
-        } else {
-            throw ClassCastException(
-                context.toString() + " must implement methods."
-            )
-        }
-        return display
-    }
+//    fun getDisplayContext(context:Context): Display {
+//        if (context is Display) {
+//            display = context
+//        } else {
+//            throw ClassCastException(
+//                context.toString() + " must implement methods."
+//            )
+//        }
+//        return display
+//    }
 
     fun onGetPayIdsSuccess(facts: Facts) {
         display.displayFactsList(facts.rows)
     }
 
     fun onGetPayIdsFailure(throwable: Throwable) {
-        val parsedData = FileParsing.parseJson(context)
+      //  val parsedData = FileParsing.parseJson(context)
         display.showError(throwable)
-        display.setDummyFactsData(parsedData.rows)
+      //  display.setDummyFactsData(parsedData.rows)
     }
 
     interface Display {
@@ -78,5 +85,7 @@ class FactsPresenter @Inject constructor(val context: Context) {
         fun showError(throwable: Throwable)
 
         fun setDummyFactsData(factsData: ArrayList<FactsRowItem>)
+
+        fun checkDagger()
     }
 }
